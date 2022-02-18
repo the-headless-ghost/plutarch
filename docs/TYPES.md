@@ -48,7 +48,7 @@ This is synonymous to Plutus Core [builtin integer](https://playground.plutus.io
 Plutarch level boolean terms can be constructed using `pconstant True` and `pconstant False`.
 
 ```haskell
-pif (pconstant PFalse) 7 42
+pif (pconstant False) 7 42
 -- evaluates to 42
 ```
 
