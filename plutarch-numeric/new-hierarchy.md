@@ -54,6 +54,7 @@ Instances:
 
 **Koz note:** This is what allows a given type to act as the numerator in a
 `Ratio`.
+```
 
 ### `AdditiveSemigroup`
 
