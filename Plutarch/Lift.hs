@@ -84,7 +84,7 @@ data LiftError
   = LiftError_EvalError EvalError
   | LiftError_ReadKnownError (ErrorWithCause ReadKnownError (MachineError PLC.DefaultFun))
   | LiftError_FromRepr
-  deriving stock (Eq)
+  deriving stock (Eq, Show)
 
 {- | Convert a Plutarch term to the associated Haskell value. Fail otherwise.
 This will fully evaluate the arbitrary closed expression, and convert the resulting value.
