@@ -1,7 +1,5 @@
 module Plutarch.ListUtils (preverse, pcheckSorted) where
 
-import Plutarch.Prelude
-
 -- | / O(n) /. reverses a list
 preverse :: (PIsListLike l a) => Term s (l a :--> l a)
 preverse =

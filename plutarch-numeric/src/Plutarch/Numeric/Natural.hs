@@ -28,7 +28,7 @@ import Plutarch.Lift (
  )
 import Plutarch.Maybe (PMaybe (PJust, PNothing))
 import Plutarch.Unsafe (punsafeBuiltin, punsafeCoerce)
-import PlutusCore qualified as PLC
+import qualified PlutusCore as PLC
 
 {- | Plutarch version of 'Natural'.
 

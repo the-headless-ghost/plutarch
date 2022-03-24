@@ -11,7 +11,7 @@ import Plutarch.Numeric.NZInteger (NZInteger (NZInteger), PNZInteger)
 import Plutarch.Numeric.NZNatural (NZNatural (NZNatural), PNZNatural)
 import Plutarch.Numeric.Natural (Natural (Natural), PNatural)
 import Plutarch.Unsafe (punsafeBuiltin, punsafeCoerce)
-import PlutusCore qualified as PLC
+import qualified PlutusCore as PLC
 
 {- | Represents a type's ability to be extended to the field of fractions. Also
  provides key methods required for the implementation of

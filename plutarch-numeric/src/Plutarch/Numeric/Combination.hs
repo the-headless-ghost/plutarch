@@ -41,9 +41,9 @@ import Plutarch.Numeric.Ratio (
  )
 import Plutarch.Pair (PPair (PPair))
 import Plutarch.Unsafe (punsafeBuiltin, punsafeCoerce)
-import PlutusCore qualified as PLC
+import qualified PlutusCore as PLC
 import Prelude hiding (abs, div, mod, negate, quot, rem, (*), (+), (-), (/))
-import Prelude qualified
+import qualified Prelude
 
 {- | A semirig (semiring without a neutral additive element) formed from an
  'AdditiveSemigroup' and a 'MultiplicativeMonoid'.

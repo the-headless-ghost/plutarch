@@ -21,9 +21,9 @@ import Plutarch.Numeric.Ratio (
  )
 import Plutarch.Pair (PPair (PPair))
 import Plutarch.Unsafe (punsafeBuiltin, punsafeCoerce)
-import PlutusCore qualified as PLC
+import qualified PlutusCore as PLC
 import Prelude hiding (abs, signum, (*))
-import Prelude qualified
+import qualified Prelude
 
 {- | A semigroup, meant to be morally equivalent to numerical multiplication.
 

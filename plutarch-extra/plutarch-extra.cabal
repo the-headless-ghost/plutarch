@@ -58,6 +58,8 @@ common c
     TypeOperators
     TypeSynonymInstances
     ViewPatterns
+    OverloadedRecordDot
+    QualifiedDo
 
   ghc-options:
     -Wall -Wcompat -Wincomplete-uni-patterns -Wno-unused-do-bind
@@ -78,8 +80,28 @@ library plutarch-preludes
 
 library
   import:          c, deps
+  mixins:
+    base hiding (Prelude),
+    plutarch-preludes (PPrelude as Prelude)
+
   exposed-modules:
+    Plutarch.Api.V1.Extra
+    Plutarch.Categories.Extra
     Plutarch.Extra
     Plutarch.ListUtils
+    Plutarch.Map.Extra
+    Plutarch.Maybe.Extra
+    Plutarch.State.Extra
+    Plutarch.Trace.Extra
+
+  build-depends:
+    , base
+    , generics-sop
+    , plutarch
+    , plutarch-preludes
+    , plutus-core
+    , plutus-ledger-api
+    , plutus-tx
+    , text
 
 -- other-modules:

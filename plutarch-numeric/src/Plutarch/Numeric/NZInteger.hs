@@ -18,7 +18,7 @@ import Plutarch.Lift (
   PUnsafeLiftDecl (PLifted),
  )
 import Plutarch.Unsafe (punsafeBuiltin)
-import PlutusCore qualified as PLC
+import qualified PlutusCore as PLC
 
 {- | Plutarch version of 'NZInteger'.
 
