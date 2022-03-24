@@ -86,6 +86,7 @@ library
 
   exposed-modules:
     Plutarch.Api.V1.Extra
+    Plutarch.Api.V1.These
     Plutarch.Categories.Extra
     Plutarch.Extra
     Plutarch.Integer.Extra
@@ -93,6 +94,7 @@ library
     Plutarch.Map.Extra
     Plutarch.Maybe.Extra
     Plutarch.State.Extra
+    Plutarch.These
     Plutarch.Trace.Extra
 
   build-depends:
