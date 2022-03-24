@@ -46,6 +46,7 @@
   inputs.Shrinker.flake = false;
   inputs.haskell-language-server.url = "github:haskell/haskell-language-server";
   inputs.haskell-language-server.flake = false;
+  inputs.nixpkgs-2111.url = "github:NixOS/nixpkgs/nixpkgs-21.11-darwin";
 
   # These use the PRs from https://github.com/NorfairKing/sydtest/issues/35
   inputs.sydtest.url = "github:srid/sydtest/ghc921";
