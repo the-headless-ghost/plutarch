@@ -1,5 +1,4 @@
 {-# LANGUAGE QualifiedDo #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
 
 module Plutarch.Maybe.Extra (
   pfromMaybe,
@@ -12,11 +11,9 @@ import qualified Plutarch.Monadic as P
 -- | Note, Peter 2022-02-23: Unsafe. Will error.
 pfromMaybe :: Term s (PMaybe a :--> a)
 pfromMaybe = phoistAcyclic $
-  plam $ \maybe -> unTermCont $ do
-    res <- tcont $ pmatch maybe
-    pure $ case res of
-      PNothing -> perror
-      PJust a -> a
+  plam $ \m -> P.do
+    PJust a <- pmatch m
+    a
 
 pfromMaybeData :: (PIsData a) => Term s (PMaybeData a :--> a)
 pfromMaybeData = phoistAcyclic $
