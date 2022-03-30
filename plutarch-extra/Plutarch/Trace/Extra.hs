@@ -27,13 +27,6 @@ ptraceIfNothing ::
   Term s PString ->
   Term s (PMaybe a) ->
   Term s a
-
-#ifdef Development
 ptraceIfNothing s a' = plet a' $ \a -> pmatch a $ \case
   PJust x -> x
   PNothing -> ptraceError s
-#else
-ptraceIfNothing _ a' = plet a' $ \a -> pmatch a $ \case
-  PJust x -> x
-  PNothing -> perror
-#endif

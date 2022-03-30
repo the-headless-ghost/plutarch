@@ -146,11 +146,7 @@ passetClass = plam $ \sym tok ->
       #$ pdcons @"tokenName" # pdata tok # pdnil
 
 instance PEq PTxOutRef where
-  x #== y = P.do
-    x' <- pletFields @["id", "idx"] x
-    y' <- pletFields @["id", "idx"] y
-    x'.id #== y'.id
-      #&& x'.idx #== y'.idx
+  x #== y = pdata x #== pdata y
 
 -- and here the (:$)
 
