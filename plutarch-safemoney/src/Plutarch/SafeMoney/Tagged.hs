@@ -1,4 +1,5 @@
 {-# LANGUAGE ViewPatterns #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
 {- |
 Module     : Plutarch.SafeMoney.Tagged
@@ -31,7 +32,25 @@ import Data.Tagged
 import Plutarch.Numeric
 import Plutarch.Prelude
 import Plutarch.Unsafe (punsafeCoerce)
+import PlutusTx qualified
 import Prelude hiding (Fractional (..), Num (..), quot, rem)
+
+--------------------------------------------------------------------------------
+-- Data.Tagged orphans.
+-- The only alternative way to solve this is to use our own version of 'Tagged'.
+-- Even Tagged from "plutus-ledger-api" doesn't have ToData instances.
+
+deriving newtype instance
+  PlutusTx.ToData underlying =>
+  PlutusTx.ToData (Tagged tag underlying)
+
+deriving newtype instance
+  PlutusTx.FromData underlying =>
+  PlutusTx.FromData (Tagged tag underlying)
+
+deriving newtype instance
+  PlutusTx.UnsafeFromData underlying =>
+  PlutusTx.UnsafeFromData (Tagged tag underlying)
 
 --------------------------------------------------------------------------------
 
