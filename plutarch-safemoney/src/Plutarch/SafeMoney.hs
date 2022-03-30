@@ -9,8 +9,17 @@ Phantom-type tagged types for handling assets in Plutus.
 -}
 module Plutarch.SafeMoney (
   -- * Tagged data types
-  Tagged.PTagged (..),
+  Tagged.PTagged,
+  Tagged.ptag,
+  Tagged.puntag,
+  Tagged.pretag,
+
+  -- * Reexports from "Data.Tagged"
   Tagged.Tagged (..),
+  Tagged.untag,
+  Tagged.retag,
+
+  -- * Numeric type aliases
   PDiscrete,
   PDense,
 
@@ -41,7 +50,10 @@ type PDense tag = PTagged tag PRational
 
 --------------------------------------------------------------------------------
 
--- | Downcast a 'PValue' to a 'PDiscrete' unit, providing a witness of the 'AssetClass'.
+{- | Downcast a 'PValue' to a 'PDiscrete' unit, providing a witness of the 'AssetClass'.
+
+     @since 0.3
+-}
 pvalueDiscrete ::
   forall (tag :: Type) (s :: S).
   Tagged tag AssetClass ->
@@ -53,6 +65,8 @@ pvalueDiscrete (Tagged (AssetClass (cs, tn))) = phoistAcyclic $
 {- | Get a 'PValue' from a 'PDiscrete', providing a witness of the 'AssetClass'.
      __NOTE__: `pdiscreteValue` after `pvalueDiscrete` is not a round-trip.
      It filters for a particular tag.
+
+     @since 0.3
 -}
 pdiscreteValue ::
   forall (tag :: Type) (s :: S).

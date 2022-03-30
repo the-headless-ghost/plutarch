@@ -50,10 +50,10 @@ library
   import:          lang
   exposed-modules:
     Plutarch.SafeMoney
+    Plutarch.SafeMoney.Exchange
+    Plutarch.SafeMoney.Tagged
 
   other-modules:
-    Plutarch.SafeMoney.Tagged
-    Plutarch.SafeMoney.Exchange
 
   build-depends:
     , base               >=4.14
