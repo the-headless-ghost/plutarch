@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
@@ -29,8 +30,10 @@ module Plutarch.SafeMoney.Tagged (
 ) where
 
 import Data.Tagged
+import Plutarch.Lift (PConstant (PConstantRepr, PConstanted, pconstantFromRepr, pconstantToRepr), PUnsafeLiftDecl (..))
 import Plutarch.Numeric
 import Plutarch.Prelude
+import Plutarch.Show (PShow (pshow'))
 import Plutarch.Unsafe (punsafeCoerce)
 import PlutusTx qualified
 import Prelude hiding (Fractional (..), Num (..), quot, rem)
@@ -63,6 +66,19 @@ newtype PTagged tag (underlying :: PType) (s :: S)
   deriving
     (PlutusType, PIsData, PEq, POrd)
     via (DerivePNewtype (PTagged tag underlying) underlying)
+
+instance PUnsafeLiftDecl a => PUnsafeLiftDecl (PTagged t a) where
+  type PLifted (PTagged t a) = Tagged t (PLifted a)
+
+instance PConstant a => PConstant (Tagged t a) where
+  type PConstantRepr (Tagged t a) = PConstantRepr a
+  type PConstanted (Tagged t a) = PTagged t (PConstanted a)
+  pconstantToRepr (Tagged t) = pconstantToRepr t
+  pconstantFromRepr = fmap Tagged . pconstantFromRepr
+
+instance PShow a => PShow (PTagged tag a) where
+  pshow' True inner = "(" <> pshow' False inner <> ")"
+  pshow' False inner = "Tagged" <> " " <> pshow' True (puntag inner)
 
 {- | Change the tag on a 'PTagged'. Plutarch-level equivalent of 'retag'.
 
