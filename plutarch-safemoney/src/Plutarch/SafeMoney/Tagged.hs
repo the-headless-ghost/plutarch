@@ -29,6 +29,7 @@ module Plutarch.SafeMoney.Tagged (
   ptag,
 ) where
 
+import Control.Arrow (first)
 import Data.Tagged
 import Plutarch.Lift (PConstant (PConstantRepr, PConstanted, pconstantFromRepr, pconstantToRepr), PUnsafeLiftDecl (..))
 import Plutarch.Numeric
@@ -86,6 +87,26 @@ deriving via
   instance
     PTryFrom a underlying =>
     PTryFrom a (PTagged tagged underlying)
+
+{- | No checks performed on this 'PTryFrom', since the structure is identical.
+     This primarily allows types which want to implement 'PTryFrom' to work.
+
+     @since 0.3
+-}
+instance
+  PTryFrom PData (PAsData underlying) =>
+  PTryFrom PData (PAsData (PTagged tag underlying))
+  where
+  -- The excess is just whatever the underlying excess would be.
+  type
+    PTryFromExcess PData (PAsData (PTagged tag underlying)) =
+      PTryFromExcess PData (PAsData underlying)
+  ptryFrom' d k =
+    ptryFrom' @_ @(PAsData underlying) d $
+      -- JUSTIFICATION:
+      -- We are coercing from @PAsData underlying@ to @PAsData (PTagged tag underlying)@.
+      -- Since 'PTagged' is a simple newtype, their shape is the same.
+      k . first punsafeCoerce
 
 instance PUnsafeLiftDecl a => PUnsafeLiftDecl (PTagged t a) where
   type PLifted (PTagged t a) = Tagged t (PLifted a)
