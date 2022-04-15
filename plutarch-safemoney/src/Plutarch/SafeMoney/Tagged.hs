@@ -34,6 +34,7 @@ import Plutarch.Lift (PConstant (PConstantRepr, PConstanted, pconstantFromRepr, 
 import Plutarch.Numeric
 import Plutarch.Prelude
 import Plutarch.Show (PShow (pshow'))
+import Plutarch.TryFrom (PTryFrom (..))
 import Plutarch.Unsafe (punsafeCoerce)
 import PlutusTx qualified
 import Prelude hiding (Fractional (..), Num (..), quot, rem)
@@ -64,8 +65,27 @@ deriving newtype instance
 newtype PTagged tag (underlying :: PType) (s :: S)
   = PTagged (Term s underlying)
   deriving
-    (PlutusType, PIsData, PEq, POrd)
+    ( -- | @since 0.3
+      PlutusType
+    , -- | @since 0.3
+      PIsData
+    , -- | @since 0.3
+      PEq
+    , -- | @since 0.3
+      POrd
+    )
     via (DerivePNewtype (PTagged tag underlying) underlying)
+
+{- | No checks performed on this 'PTryFrom', since the structure is identical.
+     This primarily allows types which want to implement 'PTryFrom' to work.
+
+     @since 0.3
+-}
+deriving via
+  DerivePNewtype (PTagged tagged underlying) underlying
+  instance
+    PTryFrom a underlying =>
+    PTryFrom a (PTagged tagged underlying)
 
 instance PUnsafeLiftDecl a => PUnsafeLiftDecl (PTagged t a) where
   type PLifted (PTagged t a) = Tagged t (PLifted a)
@@ -76,9 +96,13 @@ instance PConstant a => PConstant (Tagged t a) where
   pconstantToRepr (Tagged t) = pconstantToRepr t
   pconstantFromRepr = fmap Tagged . pconstantFromRepr
 
+{- | PShow defers to underlying type. Behaves similarly to Show instance
+     of 'Tagged'.
+     @since 0.3
+-}
 instance PShow a => PShow (PTagged tag a) where
   pshow' True inner = "(" <> pshow' False inner <> ")"
-  pshow' False inner = "Tagged" <> " " <> pshow' True (puntag inner)
+  pshow' False inner = "PTagged" <> " " <> pshow' True (puntag inner)
 
 {- | Change the tag on a 'PTagged'. Plutarch-level equivalent of 'retag'.
 
