@@ -1,0 +1,70 @@
+cabal-version:      3.0
+name:               plutarch-safemoney
+version:            0.3
+author:             Emily Martins <emi@haskell.fyi>
+license:            MIT
+extra-source-files:
+  README.md
+
+common lang
+  default-language:   Haskell2010
+  default-extensions:
+    BangPatterns
+    BinaryLiterals
+    ConstraintKinds
+    DataKinds
+    DeriveFunctor
+    DeriveGeneric
+    DeriveTraversable
+    DerivingStrategies
+    DerivingVia
+    DuplicateRecordFields
+    EmptyCase
+    FlexibleContexts
+    FlexibleInstances
+    GADTs
+    GeneralizedNewtypeDeriving
+    HexFloatLiterals
+    ImportQualifiedPost
+    InstanceSigs
+    KindSignatures
+    LambdaCase
+    MultiParamTypeClasses
+    NumericUnderscores
+    OverloadedStrings
+    ScopedTypeVariables
+    StandaloneDeriving
+    TupleSections
+    TypeApplications
+    TypeOperators
+    TypeSynonymInstances
+    UndecidableInstances
+    QualifiedDo
+
+  ghc-options:
+    -Wall -Wcompat -Wincomplete-uni-patterns -Wredundant-constraints
+    -Wmissing-export-lists -Werror -Wincomplete-record-updates
+    -Wmissing-deriving-strategies
+
+library
+  import:          lang
+  exposed-modules:
+    Plutarch.SafeMoney
+    Plutarch.SafeMoney.Exchange
+    Plutarch.SafeMoney.Tagged
+
+  other-modules:
+
+  build-depends:
+    , base               >=4.14
+    , plutarch          ^>=1.1
+    , plutarch-numeric  ^>=1.0
+    , plutarch-extra    ^>=1.1
+
+    , tagged
+
+    , plutus-ledger-api
+    , plutus-tx
+    , plutus-core
+
+  hs-source-dirs:  src
