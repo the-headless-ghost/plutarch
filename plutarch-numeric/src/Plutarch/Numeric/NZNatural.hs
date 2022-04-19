@@ -1,29 +1,29 @@
 {-# LANGUAGE TypeFamilies #-}
 
-module Plutarch.Numeric.NZNatural (
-  PNZNatural,
-  NZNatural (..),
-) where
+module Plutarch.Numeric.NZNatural
+  ( PNZNatural,
+    NZNatural (..),
+  )
+where
 
 import Control.Monad (guard)
 import Plutarch (S, (#))
 import Plutarch.Bool (PEq ((#==)), POrd ((#<), (#<=)))
-import Plutarch.Lift (
-  PConstant (
-    PConstantRepr,
-    PConstanted,
-    pconstantFromRepr,
-    pconstantToRepr
-  ),
-  PUnsafeLiftDecl (PLifted),
- )
+import Plutarch.Lift
+  ( PConstantDecl
+      ( PConstantRepr,
+        PConstanted,
+        pconstantFromRepr,
+        pconstantToRepr
+      ),
+    PUnsafeLiftDecl (PLifted),
+  )
 import Plutarch.Unsafe (punsafeBuiltin)
 import qualified PlutusCore as PLC
 
-{- | Plutarch version of 'NZNatural'.
-
- @since 1.0
--}
+-- | Plutarch version of 'NZNatural'.
+--
+-- @since 1.0
 data PNZNatural (s :: S)
 
 -- | @since 1.0
@@ -38,16 +38,15 @@ instance POrd PNZNatural where
   {-# INLINEABLE (#<) #-}
   n #< n' = punsafeBuiltin PLC.LessThanInteger # n # n'
 
-{- | A representation of natural numbers without zero; specifically,
- \(\mathbb{N} - \{0\}\).
-
- @since 1.0
--}
+-- | A representation of natural numbers without zero; specifically,
+-- \(\mathbb{N} - \{0\}\).
+--
+-- @since 1.0
 newtype NZNatural = NZNatural Integer
   deriving
     ( -- | @since 1.0
-      Eq
-    , -- | @since 1.0
+      Eq,
+      -- | @since 1.0
       Ord
     )
     via Integer
@@ -57,7 +56,7 @@ instance PUnsafeLiftDecl PNZNatural where
   type PLifted PNZNatural = NZNatural
 
 -- | @since 1.0
-instance PConstant NZNatural where
+instance PConstantDecl NZNatural where
   type PConstantRepr NZNatural = Integer
   type PConstanted NZNatural = PNZNatural
   {-# INLINEABLE pconstantToRepr #-}

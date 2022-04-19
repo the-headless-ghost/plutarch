@@ -1,29 +1,29 @@
 {-# LANGUAGE TypeFamilies #-}
 
-module Plutarch.Numeric.NZInteger (
-  PNZInteger,
-  NZInteger (..),
-) where
+module Plutarch.Numeric.NZInteger
+  ( PNZInteger,
+    NZInteger (..),
+  )
+where
 
 import Control.Monad (guard)
 import Plutarch (S, (#))
 import Plutarch.Bool (PEq ((#==)), POrd ((#<), (#<=)))
-import Plutarch.Lift (
-  PConstant (
-    PConstantRepr,
-    PConstanted,
-    pconstantFromRepr,
-    pconstantToRepr
-  ),
-  PUnsafeLiftDecl (PLifted),
- )
+import Plutarch.Lift
+  ( PConstantDecl
+      ( PConstantRepr,
+        PConstanted,
+        pconstantFromRepr,
+        pconstantToRepr
+      ),
+    PUnsafeLiftDecl (PLifted),
+  )
 import Plutarch.Unsafe (punsafeBuiltin)
 import qualified PlutusCore as PLC
 
-{- | Plutarch version of 'NZInteger'.
-
- @since 1.0
--}
+-- | Plutarch version of 'NZInteger'.
+--
+-- @since 1.0
 data PNZInteger (s :: S)
 
 -- | @since 1.0
@@ -38,16 +38,15 @@ instance POrd PNZInteger where
   {-# INLINEABLE (#<) #-}
   n #< n' = punsafeBuiltin PLC.LessThanInteger # n # n'
 
-{- | A representation integers without zero; more precisely,
- \(\mathbb{Z} - \{0\}\).
-
- @since 1.0
--}
+-- | A representation integers without zero; more precisely,
+-- \(\mathbb{Z} - \{0\}\).
+--
+-- @since 1.0
 newtype NZInteger = NZInteger Integer
   deriving
     ( -- | @since 1.0
-      Eq
-    , -- | @since 1.0
+      Eq,
+      -- | @since 1.0
       Ord
     )
     via Integer
@@ -57,7 +56,7 @@ instance PUnsafeLiftDecl PNZInteger where
   type PLifted PNZInteger = NZInteger
 
 -- | @since 1.0
-instance PConstant NZInteger where
+instance PConstantDecl NZInteger where
   type PConstantRepr NZInteger = Integer
   type PConstanted NZInteger = PNZInteger
   {-# INLINEABLE pconstantToRepr #-}
