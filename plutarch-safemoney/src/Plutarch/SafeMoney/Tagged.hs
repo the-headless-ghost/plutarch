@@ -31,7 +31,7 @@ module Plutarch.SafeMoney.Tagged (
 
 import Control.Arrow (first)
 import Data.Tagged
-import Plutarch.Lift (PConstant (PConstantRepr, PConstanted, pconstantFromRepr, pconstantToRepr), PUnsafeLiftDecl (..))
+import Plutarch.Lift (PConstantDecl (PConstantRepr, PConstanted, pconstantFromRepr, pconstantToRepr), PUnsafeLiftDecl (..))
 import Plutarch.Numeric
 import Plutarch.Prelude
 import Plutarch.Show (PShow (pshow'))
@@ -111,7 +111,7 @@ instance
 instance PUnsafeLiftDecl a => PUnsafeLiftDecl (PTagged t a) where
   type PLifted (PTagged t a) = Tagged t (PLifted a)
 
-instance PConstant a => PConstant (Tagged t a) where
+instance PConstantDecl a => PConstantDecl (Tagged t a) where
   type PConstantRepr (Tagged t a) = PConstantRepr a
   type PConstanted (Tagged t a) = PTagged t (PConstanted a)
   pconstantToRepr (Tagged t) = pconstantToRepr t
