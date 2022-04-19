@@ -24,7 +24,7 @@ import Plutarch.DataRepr (
   DerivePConstantViaData (DerivePConstantViaData),
   PIsDataReprInstances (PIsDataReprInstances),
  )
-import Plutarch.Lift (PLifted, PUnsafeLiftDecl)
+import Plutarch.Lift (PConstantDecl, PLifted, PUnsafeLiftDecl)
 import Plutarch.Prelude
 
 data PDCert (s :: S)
@@ -47,8 +47,8 @@ data PDCert (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData)
+    (PlutusType, PIsData, PEq, POrd)
     via (PIsDataReprInstances PDCert)
 
 instance PUnsafeLiftDecl PDCert where type PLifted PDCert = Plutus.DCert
-deriving via (DerivePConstantViaData Plutus.DCert PDCert) instance (PConstant Plutus.DCert)
+deriving via (DerivePConstantViaData Plutus.DCert PDCert) instance PConstantDecl Plutus.DCert

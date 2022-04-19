@@ -8,19 +8,7 @@ import qualified GHC.Generics as GHC
 
 import Generics.SOP (Generic, I (I))
 
-import Test.Syd
-
 -- Plutus and PlutusTx imports
-import Plutus.V1.Ledger.Api (
-  Address (Address),
-  Credential (ScriptCredential),
-  Datum (Datum),
-  DatumHash,
-  ScriptContext (ScriptContext),
-  ToData (toBuiltinData),
-  TxInfo (txInfoData, txInfoOutputs),
-  TxOut (TxOut, txOutAddress, txOutDatumHash, txOutValue),
- )
 
 import PlutusTx (
   Data (B, Constr, I),
@@ -29,18 +17,7 @@ import PlutusTx (
 -- Plutarch imports
 import Plutarch.Prelude
 
-import Plutarch.Test (
-  passert,
-  pfails,
-  pgoldenSpec,
-  plutarchDevFlagDescribe,
-  psucceeds,
-  (@->),
-  (@\),
-  (@|),
- )
-
-import Plutarch (ClosedTerm, popaque)
+import Plutarch.Test
 
 import Plutarch.Unsafe (
   punsafeCoerce,
@@ -76,12 +53,10 @@ import Plutarch.TryFrom (
 
 import Plutarch.Reducible (Reduce, Reducible)
 
-import Plutarch.ApiSpec (info, purpose)
-import qualified Plutarch.ApiSpec as Api
-
+import Plutarch.ApiSpec (invalidContext1, validContext0)
 import Plutarch.DataRepr (PIsDataReprInstances (PIsDataReprInstances))
 
-import GHC.Records (getField)
+import Test.Hspec
 
 spec :: Spec
 spec = do
@@ -232,9 +207,7 @@ spec = do
         "sample usage contains the right value"
           @| pconstant 42 #== theField @-> passert
     "example" @\ do
-      let validContext0 = ctx validOutputs0 validList1
-          invalidContext1 = ctx invalidOutputs1 validList1
-          l1 :: Term _ (PAsData (PBuiltinList (PAsData PInteger)))
+      let l1 :: Term _ (PAsData (PBuiltinList (PAsData PInteger)))
           l1 = toDatadList [1 .. 5]
           l2 :: Term _ (PAsData (PBuiltinList (PAsData PInteger)))
           l2 = toDatadList [6 .. 10]
@@ -333,7 +306,7 @@ validator = phoistAcyclic $
           pure $ pfield @"_0" # dhash
 
         data' :: Term _ (PBuiltinList (PAsData (PTuple PDatumHash PDatum)))
-        data' = pfield @"data" # txInfo
+        data' = pfield @"datums" # txInfo
 
         outputs :: Term _ (PBuiltinList (PAsData PTxOut))
         outputs = pfield @"outputs" # txInfo
@@ -389,51 +362,7 @@ pfindOwnInput = phoistAcyclic $
           (pfield @"id" # target) #== (pfield @"id" #$ pfield @"outRef" # pfromData actual)
     pure $ pfind # pred # txInInfos
 
-------------------- Mocking a ScriptContext ----------------------------------------
-
-ctx :: [TxOut] -> [(DatumHash, Datum)] -> Term s PScriptContext
-ctx outs l = pconstant (ScriptContext (info' outs l) purpose)
-
-info' :: [TxOut] -> [(DatumHash, Datum)] -> TxInfo
-info' outs dat =
-  info
-    { txInfoData = dat
-    , txInfoOutputs = outs
-    }
-
-validOutputs0 :: [TxOut]
-validOutputs0 =
-  [ TxOut
-      { txOutAddress =
-          Address (ScriptCredential Api.validator) Nothing
-      , txOutValue = mempty
-      , txOutDatumHash = Just Api.datum
-      }
-  ]
-
-invalidOutputs1 :: [TxOut]
-invalidOutputs1 =
-  [ TxOut
-      { txOutAddress =
-          Address (ScriptCredential Api.validator) Nothing
-      , txOutValue = mempty
-      , txOutDatumHash = Just Api.datum
-      }
-  , TxOut
-      { txOutAddress =
-          Address (ScriptCredential Api.validator) Nothing
-      , txOutValue = mempty
-      , txOutDatumHash = Nothing
-      }
-  ]
-
-validList1 :: [(DatumHash, Datum)]
-validList1 =
-  let dat :: Datum
-      dat = Datum $ toBuiltinData [(1 :: Integer) .. 10]
-   in [("d0", dat)]
-
-------------------- Helpers --------------------------------------------------------
+------------- Helpers --------------------------------------------------------
 
 toDatadList :: [Integer] -> Term s (PAsData (PBuiltinList (PAsData PInteger)))
 toDatadList = pdata . (foldr go pnil)

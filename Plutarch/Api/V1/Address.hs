@@ -21,6 +21,7 @@ import Plutarch.DataRepr (
   PIsDataReprInstances (PIsDataReprInstances),
  )
 import Plutarch.Lift (
+  PConstantDecl,
   PLifted,
   PUnsafeLiftDecl,
  )
@@ -33,11 +34,11 @@ data PCredential (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData)
+    (PlutusType, PIsData, PEq, POrd)
     via (PIsDataReprInstances PCredential)
 
 instance PUnsafeLiftDecl PCredential where type PLifted PCredential = Plutus.Credential
-deriving via (DerivePConstantViaData Plutus.Credential PCredential) instance (PConstant Plutus.Credential)
+deriving via (DerivePConstantViaData Plutus.Credential PCredential) instance PConstantDecl Plutus.Credential
 
 data PStakingCredential (s :: S)
   = PStakingHash (Term s (PDataRecord '["_0" ':= PCredential]))
@@ -55,11 +56,11 @@ data PStakingCredential (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData)
+    (PlutusType, PIsData, PEq, POrd)
     via PIsDataReprInstances PStakingCredential
 
 instance PUnsafeLiftDecl PStakingCredential where type PLifted PStakingCredential = Plutus.StakingCredential
-deriving via (DerivePConstantViaData Plutus.StakingCredential PStakingCredential) instance (PConstant Plutus.StakingCredential)
+deriving via (DerivePConstantViaData Plutus.StakingCredential PStakingCredential) instance PConstantDecl Plutus.StakingCredential
 
 newtype PAddress (s :: S)
   = PAddress
@@ -75,8 +76,8 @@ newtype PAddress (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq, POrd)
     via PIsDataReprInstances PAddress
 
 instance PUnsafeLiftDecl PAddress where type PLifted PAddress = Plutus.Address
-deriving via (DerivePConstantViaData Plutus.Address PAddress) instance (PConstant Plutus.Address)
+deriving via (DerivePConstantViaData Plutus.Address PAddress) instance PConstantDecl Plutus.Address

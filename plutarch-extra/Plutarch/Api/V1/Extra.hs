@@ -145,9 +145,6 @@ passetClass = plam $ \sym tok ->
     pdcons @"currencySymbol" # pdata sym
       #$ pdcons @"tokenName" # pdata tok # pdnil
 
-instance PEq PTxOutRef where
-  x #== y = pdata x #== pdata y
-
 -- and here the (:$)
 
 type a :$ b = a b

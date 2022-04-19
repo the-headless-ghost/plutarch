@@ -7,12 +7,9 @@ import qualified GHC.Generics as GHC
 import qualified Generics.SOP as SOP
 import Plutarch.DataRepr (PIsDataReprInstances (PIsDataReprInstances))
 import Plutarch.Lift
-  ( PConstantRepr,
-    PConstanted,
+  ( PConstantDecl (PConstantRepr, PConstanted, pconstantFromRepr, pconstantToRepr),
     PLifted,
     PUnsafeLiftDecl,
-    pconstantFromRepr,
-    pconstantToRepr,
   )
 import qualified Plutus.V1.Ledger.Api as Plutus
 import qualified PlutusTx.These as PlutusThese
@@ -55,7 +52,7 @@ instance
     Plutus.ToData b,
     PConstant b
   ) =>
-  PConstant (PlutusThese.These a b)
+  PConstantDecl (PlutusThese.These a b)
   where
   type PConstantRepr (PlutusThese.These a b) = [(Plutus.Data, Plutus.Data)]
   type PConstanted (PlutusThese.These a b) = PTheseData (PConstanted a) (PConstanted b)

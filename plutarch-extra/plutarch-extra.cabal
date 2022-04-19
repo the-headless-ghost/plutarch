@@ -90,6 +90,8 @@ library
     Plutarch.Categories.Extra
     Plutarch.Extra
     Plutarch.Integer.Extra
+    Plutarch.Extra.Api
+    Plutarch.Extra.TermCont
     Plutarch.ListUtils
     Plutarch.Map.Extra
     Plutarch.Maybe.Extra

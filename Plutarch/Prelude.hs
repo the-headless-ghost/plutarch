@@ -3,6 +3,7 @@ module Plutarch.Prelude (
   (:-->),
   PDelayed,
   Term,
+  ClosedTerm,
   plam,
   plam',
   papp,
@@ -96,6 +97,10 @@ module Plutarch.Prelude (
   -- * Scott encoded pair type and utilities
   PPair (..),
 
+  -- * Opaque type
+  POpaque (POpaque),
+  popaque,
+
   -- * Builtin types and utilities
   PData,
   pfstBuiltin,
@@ -113,8 +118,8 @@ module Plutarch.Prelude (
   pdcons,
   pdnil,
   pfield,
+  getField,
   pletFields,
-  hrecField,
 
   -- * Tracing
   ptrace,
@@ -135,6 +140,8 @@ module Plutarch.Prelude (
   plift,
   PConstant,
   PLift,
+  PConstantData,
+  PLiftData,
 
   -- * Typeclass derivers.
   DerivePNewtype (DerivePNewtype),
@@ -148,6 +155,7 @@ module Plutarch.Prelude (
 import Prelude ()
 
 import Data.Kind (Type)
+import GHC.Records (getField)
 import Plutarch
 import Plutarch.Bool
 import Plutarch.Builtin

@@ -29,26 +29,28 @@ import Plutarch.DataRepr (
   PIsDataReprInstances (PIsDataReprInstances),
  )
 import Plutarch.Lift (
+  PConstantDecl,
   PLifted,
   PUnsafeLiftDecl,
  )
 import Plutarch.Prelude
 
+-- | A pending transaction. This is the view as seen by the validator script.
 newtype PTxInfo (s :: S)
   = PTxInfo
       ( Term
           s
           ( PDataRecord
-              '[ "inputs" ':= PBuiltinList (PAsData PTxInInfo)
-               , "outputs" ':= PBuiltinList (PAsData PTxOut)
-               , "fee" ':= PValue
-               , "mint" ':= PValue
-               , "dcert" ':= PBuiltinList (PAsData PDCert)
-               , "wdrl" ':= PBuiltinList (PAsData (PTuple PStakingCredential PInteger))
-               , "validRange" ':= PPOSIXTimeRange
-               , "signatories" ':= PBuiltinList (PAsData PPubKeyHash)
-               , "data" ':= PBuiltinList (PAsData (PTuple PDatumHash PDatum))
-               , "id" ':= PTxId
+              '[ "inputs" ':= PBuiltinList (PAsData PTxInInfo) -- Transaction inputs
+               , "outputs" ':= PBuiltinList (PAsData PTxOut) -- Transaction outputs
+               , "fee" ':= PValue -- The fee paid by this transaction.
+               , "mint" ':= PValue -- The value minted by the transaction.
+               , "dcert" ':= PBuiltinList (PAsData PDCert) -- Digests of the certificates included in this transaction.
+               , "wdrl" ':= PBuiltinList (PAsData (PTuple PStakingCredential PInteger)) -- Staking withdrawals
+               , "validRange" ':= PPOSIXTimeRange -- The valid range for the transaction.
+               , "signatories" ':= PBuiltinList (PAsData PPubKeyHash) -- Signatories attesting that they all signed the tx.
+               , "datums" ':= PBuiltinList (PAsData (PTuple PDatumHash PDatum))
+               , "id" ':= PTxId -- The hash of the pending transaction.
                ]
           )
       )
@@ -56,12 +58,13 @@ newtype PTxInfo (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq)
     via PIsDataReprInstances PTxInfo
 
 instance PUnsafeLiftDecl PTxInfo where type PLifted PTxInfo = Plutus.TxInfo
-deriving via (DerivePConstantViaData Plutus.TxInfo PTxInfo) instance (PConstant Plutus.TxInfo)
+deriving via (DerivePConstantViaData Plutus.TxInfo PTxInfo) instance PConstantDecl Plutus.TxInfo
 
+-- | Script context consists of the script purpose and the pending transaction info.
 newtype PScriptContext (s :: S)
   = PScriptContext
       ( Term
@@ -76,14 +79,15 @@ newtype PScriptContext (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq)
     via PIsDataReprInstances PScriptContext
 
 instance PUnsafeLiftDecl PScriptContext where type PLifted PScriptContext = Plutus.ScriptContext
-deriving via (DerivePConstantViaData Plutus.ScriptContext PScriptContext) instance (PConstant Plutus.ScriptContext)
+deriving via (DerivePConstantViaData Plutus.ScriptContext PScriptContext) instance PConstantDecl Plutus.ScriptContext
 
 -- General types, used by V1 and V2
 
+-- | The purpose of the script that is currently running
 data PScriptPurpose (s :: S)
   = PMinting (Term s (PDataRecord '["_0" ':= PCurrencySymbol]))
   | PSpending (Term s (PDataRecord '["_0" ':= PTxOutRef]))
@@ -93,8 +97,8 @@ data PScriptPurpose (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData)
+    (PlutusType, PIsData, PEq)
     via (PIsDataReprInstances PScriptPurpose)
 
 instance PUnsafeLiftDecl PScriptPurpose where type PLifted PScriptPurpose = Plutus.ScriptPurpose
-deriving via (DerivePConstantViaData Plutus.ScriptPurpose PScriptPurpose) instance (PConstant Plutus.ScriptPurpose)
+deriving via (DerivePConstantViaData Plutus.ScriptPurpose PScriptPurpose) instance PConstantDecl Plutus.ScriptPurpose

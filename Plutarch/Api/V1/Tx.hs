@@ -23,6 +23,7 @@ import Plutarch.DataRepr (
   PIsDataReprInstances (PIsDataReprInstances),
  )
 import Plutarch.Lift (
+  PConstantDecl,
   PLifted,
   PUnsafeLiftDecl,
  )
@@ -34,12 +35,13 @@ newtype PTxId (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq, POrd)
     via PIsDataReprInstances PTxId
 
 instance PUnsafeLiftDecl PTxId where type PLifted PTxId = Plutus.TxId
-deriving via (DerivePConstantViaData Plutus.TxId PTxId) instance (PConstant Plutus.TxId)
+deriving via (DerivePConstantViaData Plutus.TxId PTxId) instance PConstantDecl Plutus.TxId
 
+-- | Reference to a transaction output with a index referencing which of the outputs is being referred to.
 newtype PTxOutRef (s :: S)
   = PTxOutRef
       ( Term
@@ -54,12 +56,13 @@ newtype PTxOutRef (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq, POrd)
     via PIsDataReprInstances PTxOutRef
 
 instance PUnsafeLiftDecl PTxOutRef where type PLifted PTxOutRef = Plutus.TxOutRef
-deriving via (DerivePConstantViaData Plutus.TxOutRef PTxOutRef) instance (PConstant Plutus.TxOutRef)
+deriving via (DerivePConstantViaData Plutus.TxOutRef PTxOutRef) instance PConstantDecl Plutus.TxOutRef
 
+-- | A input of the pending transaction.
 newtype PTxInInfo (s :: S)
   = PTxInInfo
       ( Term
@@ -74,12 +77,13 @@ newtype PTxInInfo (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq)
     via PIsDataReprInstances PTxInInfo
 
 instance PUnsafeLiftDecl PTxInInfo where type PLifted PTxInInfo = Plutus.TxInInfo
-deriving via (DerivePConstantViaData Plutus.TxInInfo PTxInInfo) instance (PConstant Plutus.TxInInfo)
+deriving via (DerivePConstantViaData Plutus.TxInInfo PTxInInfo) instance PConstantDecl Plutus.TxInInfo
 
+-- | A transaction output. This consists of a target address, value and maybe a datum hash
 newtype PTxOut (s :: S)
   = PTxOut
       ( Term
@@ -95,8 +99,8 @@ newtype PTxOut (s :: S)
   deriving anyclass (Generic)
   deriving anyclass (PIsDataRepr)
   deriving
-    (PlutusType, PIsData, PDataFields)
+    (PlutusType, PIsData, PDataFields, PEq)
     via (PIsDataReprInstances PTxOut)
 
 instance PUnsafeLiftDecl PTxOut where type PLifted PTxOut = Plutus.TxOut
-deriving via (DerivePConstantViaData Plutus.TxOut PTxOut) instance (PConstant Plutus.TxOut)
+deriving via (DerivePConstantViaData Plutus.TxOut PTxOut) instance PConstantDecl Plutus.TxOut

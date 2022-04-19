@@ -5,9 +5,10 @@ module Plutarch.PIsDataSpec (spec) where
 
 import Data.Text.Encoding (encodeUtf8)
 
+import Data.Functor.Compose (Compose (Compose))
 import Data.String (fromString)
 import qualified GHC.Generics as GHC
-import Generics.SOP (Generic, I (I))
+import Generics.SOP (Generic, I (I), NS (S, Z))
 import Plutus.V1.Ledger.Api (
   Address (Address),
   Credential (PubKeyCredential, ScriptCredential),
@@ -17,16 +18,18 @@ import Plutus.V1.Ledger.Api (
   TxOutRef (TxOutRef),
  )
 import qualified PlutusTx
-import Test.Syd
+
 import Test.Tasty.QuickCheck (Arbitrary, property)
 
 import Plutarch.Api.V1
 import Plutarch.Api.V1.Tuple (pbuiltinPairFromTuple, ptupleFromBuiltin)
 import Plutarch.Builtin (pforgetData, ppairDataBuiltin)
-import Plutarch.DataRepr (PDataFields, PIsDataReprInstances (PIsDataReprInstances))
+import Plutarch.DataRepr (PDataSum (PDataSum), PIsDataRepr (PIsDataReprRepr), PIsDataReprInstances (PIsDataReprInstances))
 import Plutarch.Lift (PLifted)
 import Plutarch.Prelude
+import Plutarch.SpecTypes (PTriplet (PTriplet))
 import Plutarch.Test
+import Test.Hspec
 
 spec :: Spec
 spec = do
@@ -75,59 +78,78 @@ spec = do
     describe "constr" . pgoldenSpec $ do
       -- Sum of products construction
       "sop" @\ do
-        "4wheeler"
-          @| pcon
-            ( PFourWheeler $
+        "4wheeler" @\ do
+          let datrec =
                 pdcons
-                  # pconstantData 2 #$ pdcons
-                  # pconstantData 5 #$ pdcons
-                  # pconstantData 42 #$ pdcons
-                  # pconstantData 0
+                  # pconstantData @PInteger 2 #$ pdcons
+                  # pconstantData @PInteger 5 #$ pdcons
+                  # pconstantData @PInteger 42 #$ pdcons
+                  # pconstantData @PInteger 0
                   # pdnil
-            )
-            @== pconstant (PlutusTx.Constr 0 [PlutusTx.I 2, PlutusTx.I 5, PlutusTx.I 42, PlutusTx.I 0])
-        "2wheeler"
-          @| pcon (PTwoWheeler $ pdcons # pconstantData 5 #$ pdcons # pconstantData 0 # pdnil)
-          @== pconstant (PlutusTx.Constr 1 [PlutusTx.I 5, PlutusTx.I 0])
-        "immovable"
-          @| pcon (PImmovableBox pdnil)
-          @== pconstant (PlutusTx.Constr 2 [])
+              expected =
+                pconstant $
+                  PlutusTx.Constr 0 [PlutusTx.I 2, PlutusTx.I 5, PlutusTx.I 42, PlutusTx.I 0]
+          "normal"
+            @| pcon (PFourWheeler datrec) @== expected
+          "pdatasum"
+            @| pcon @(PDataSum (PIsDataReprRepr PVehicle)) (PDataSum . Z $ Compose datrec) @== expected
+        "2wheeler" @\ do
+          let datrec = pdcons # pconstantData @PInteger 5 #$ pdcons # pconstantData @PInteger 0 # pdnil
+              expected = pconstant $ PlutusTx.Constr 1 [PlutusTx.I 5, PlutusTx.I 0]
+          "normal"
+            @| pcon (PTwoWheeler datrec) @== expected
+          "pdatasum"
+            @| pcon @(PDataSum (PIsDataReprRepr PVehicle)) (PDataSum . S . Z $ Compose datrec) @== expected
+        "immovable" @\ do
+          let datrec = pdnil
+              expected = pconstant $ PlutusTx.Constr 2 []
+          "normal"
+            @| pcon (PImmovableBox datrec) @== expected
+          "pdatasum"
+            @| pcon @(PDataSum (PIsDataReprRepr PVehicle)) (PDataSum . S . S . Z $ Compose datrec) @== expected
       -- Product construction
       "prod" @\ do
-        "1"
-          @| pcon
-            ( Triplet $
+        "1" @\ do
+          let datrec =
                 pdcons
                   # pconstantData @PCurrencySymbol "ab" #$ pdcons
-                  # pconstantData "41" #$ pdcons
-                  # pconstantData "0e"
+                  # pconstantData @PCurrencySymbol "41" #$ pdcons
+                  # pconstantData @PCurrencySymbol "0e"
                   # pdnil
-            )
-          @== pconstant
-            ( PlutusTx.Constr
-                0
-                [ PlutusTx.toData @CurrencySymbol "ab"
-                , PlutusTx.toData @CurrencySymbol "41"
-                , PlutusTx.toData @CurrencySymbol "0e"
-                ]
-            )
-        let minting = Minting ""
-            spending = Spending $ TxOutRef "ab" 0
-            rewarding = Rewarding . StakingHash $ PubKeyCredential "da"
-        "2"
-          @| pcon
-            ( Triplet $
+              expected =
+                pconstant $
+                  PlutusTx.Constr
+                    0
+                    [ PlutusTx.toData @CurrencySymbol "ab"
+                    , PlutusTx.toData @CurrencySymbol "41"
+                    , PlutusTx.toData @CurrencySymbol "0e"
+                    ]
+          "normal"
+            @| pcon (PTriplet datrec) @== expected
+          "pdatasum"
+            @| pcon @(PDataSum (PIsDataReprRepr (PTriplet PCurrencySymbol))) (PDataSum . Z $ Compose datrec)
+              @== expected
+        "2" @\ do
+          let minting = Minting ""
+              spending = Spending $ TxOutRef "ab" 0
+              rewarding = Rewarding . StakingHash $ PubKeyCredential "da"
+
+              datrec =
                 pdcons
                   # pconstantData minting #$ pdcons
                   # pconstantData spending #$ pdcons
                   # pconstantData rewarding
                   # pdnil
-            )
-          @== pconstant
-            ( PlutusTx.Constr
-                0
-                [PlutusTx.toData minting, PlutusTx.toData spending, PlutusTx.toData rewarding]
-            )
+              expected =
+                pconstant $
+                  PlutusTx.Constr
+                    0
+                    [PlutusTx.toData minting, PlutusTx.toData spending, PlutusTx.toData rewarding]
+          "normal"
+            @| pcon (PTriplet datrec) @== expected
+          "datasum"
+            @| pcon @(PDataSum (PIsDataReprRepr (PTriplet PScriptPurpose))) (PDataSum . Z $ Compose datrec)
+              @== expected
       -- Enumerable sum type construction
       "enum" @\ do
         "PA" @| pcon (PA pdnil) @== pconstant (PlutusTx.Constr 0 [])
@@ -198,29 +220,6 @@ pdataCompat ::
   PLifted p ->
   IO ()
 pdataCompat x = PlutusTx.fromData @(PLifted p) (plift $ pforgetData $ pdata $ pconstant @p x) `shouldBe` Just x
-
-{- |
-  We can defined a data-type using PDataRecord, with labeled fields.
-
-  With an appropriate instance of 'PIsDataRepr', we can automatically
-  derive 'PDataFields'.
--}
-newtype Triplet (a :: PType) (s :: S)
-  = Triplet
-      ( Term
-          s
-          ( PDataRecord
-              '[ "x" ':= a
-               , "y" ':= a
-               , "z" ':= a
-               ]
-          )
-      )
-  deriving stock (GHC.Generic)
-  deriving anyclass (Generic, PIsDataRepr)
-  deriving
-    (PlutusType, PIsData, PDataFields)
-    via (PIsDataReprInstances (Triplet a))
 
 data PVehicle (s :: S)
   = PFourWheeler (Term s (PDataRecord '["_0" ':= PInteger, "_1" ':= PInteger, "_2" ':= PInteger, "_3" ':= PInteger]))

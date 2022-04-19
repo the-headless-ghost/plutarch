@@ -101,6 +101,7 @@
   Module: `Plutarch.TryFrom`
 
   Added by: [#326](https://github.com/Plutonomicon/plutarch/pull/326)
+
 - `plutarch-extra`: Add a new directory scaffold "`plutarch-extra`" which will be home to everything too specific to not be in the
   main Plutarch repo. Also refactored the test library.
 
@@ -113,6 +114,44 @@
   Module: `Plutarch.PPrelude`
 
   Added by: [#356](https://github.com/Plutonomicon/plutarch/pull/356)
+
+- Add `PConstant` instance for `Maybe`, with corresponding `PLift` instance for `PMaybeData`.
+
+  Added by: [#371](https://github.com/Plutonomicon/plutarch/pull/371)
+
+- Add `POrd` and `PEq` derivation for data encoded types via `PIsDataReprInstances`.
+
+  Added by: [#371](https://github.com/Plutonomicon/plutarch/pull/371)
+
+- Make `PRational` construction machinery fail when the denominator is 0.
+
+  Fixed by: [#299](https://github.com/Plutonomicon/plutarch/pull/299)
+
+- Rename `PConstant` (the typeclass) to `PConstantDecl`. `PConstant` is now a type alias with extra constraints for better type checking.
+
+  Add `PLiftData` and `PConstantData` type aliases.
+
+  Added by: [#354](https://github.com/Plutonomicon/plutarch/pull/354)
+
+- Remove `hrecField` export. Use `getField` instead.
+
+  Removed by: [#415](https://github.com/Plutonomicon/plutarch/pull/415)
+
+- Rename the `"data"` field of `PTxInfo` to `"datums"`.
+
+  Renamed by: [#415](https://github.com/Plutonomicon/plutarch/pull/415)
+
+- Add `Num` instance for `PPOSIXTime` and export its constructor.
+
+  Added by: [#415](https://github.com/Plutonomicon/plutarch/pull/415)
+
+- `PlutusType` is now a superclass of `PIsDataRepr`, strengthening the existing `PMatch` superclass constraint.
+
+  Added by: [#415](https://github.com/Plutonomicon/plutarch/pull/415)
+
+- Add `PlutusType` instance for `PDataSum`. `PDataSum` can now be hand-constructed.
+
+  Added by: [#345](https://github.com/Plutonomicon/plutarch/pull/345)
 
 # 1.1.0
 
