@@ -1,4 +1,4 @@
-module Plutarch.ListUtils (preverse, pcheckSorted) where
+module Plutarch.Extra.List (preverse, pcheckSorted) where
 
 -- | / O(n) /. reverses a list
 preverse :: (PIsListLike l a) => Term s (l a :--> l a)

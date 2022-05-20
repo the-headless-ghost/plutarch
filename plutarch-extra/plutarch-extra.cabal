@@ -91,6 +91,7 @@ library
     Plutarch.Extra
     Plutarch.Integer.Extra
     Plutarch.Extra.Api
+    Plutarch.Extra.List
     Plutarch.Extra.TermCont
     Plutarch.ListUtils
     Plutarch.Map.Extra

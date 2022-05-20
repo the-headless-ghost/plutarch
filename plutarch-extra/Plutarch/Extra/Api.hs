@@ -14,6 +14,7 @@ import Plutarch.Api.V1 (
   PTxOutRef,
  )
 import Plutarch.TryFrom (PTryFrom, ptryFrom)
+import Plutarch.Prelude
 
 {- | Find the output txns corresponding to the input being validated.
 
@@ -75,8 +76,7 @@ pfindOwnInput = phoistAcyclic $
     matches :: Term s (PTxOutRef :--> PAsData PTxInInfo :--> PBool)
     matches = phoistAcyclic $
       plam $ \outref txininfo ->
-        pfield @"id" # outref
-          #== pfield @"id" # (pfield @"outRef" # txininfo)
+        outref #== pfield @"outRef" # txininfo
 
 {- | Lookup up the datum given the datum hash.
 

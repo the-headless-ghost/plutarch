@@ -78,6 +78,7 @@ common deps
     , base
     , bytestring
     , containers
+    , data-default
     , directory
     , filepath
     , generics-sop
@@ -155,10 +156,10 @@ executable plutarch-test
     Plutarch.ByteStringSpec
     Plutarch.EitherSpec
     Plutarch.Extra.ApiSpec
+    Plutarch.Extra.ListSpec
     Plutarch.IntegerSpec
     Plutarch.LiftSpec
     Plutarch.ListSpec
-    Plutarch.ListUtilsSpec
     Plutarch.MaybeSpec
     Plutarch.PairSpec
     Plutarch.PIsDataSpec
