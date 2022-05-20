@@ -93,7 +93,6 @@ library
     Plutarch.Extra.Api
     Plutarch.Extra.List
     Plutarch.Extra.TermCont
-    Plutarch.ListUtils
     Plutarch.Map.Extra
     Plutarch.Maybe.Extra
     Plutarch.State.Extra
