@@ -17,7 +17,6 @@ import Plutarch.DataRepr.Internal.Field (
   Bindings,
   BoundTerms,
  )
-import Plutarch.Prelude
 import Plutarch.Reducible (Reduce)
 import Plutarch.TryFrom (PTryFromExcess)
 
