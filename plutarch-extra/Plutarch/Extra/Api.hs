@@ -13,8 +13,6 @@ import Plutarch.Api.V1 (
   PTxOut,
   PTxOutRef,
  )
-import Plutarch.TryFrom (PTryFrom, ptryFrom)
-import Plutarch.Prelude
 
 {- | Find the output txns corresponding to the input being validated.
 

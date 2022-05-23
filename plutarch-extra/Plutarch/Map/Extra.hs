@@ -138,6 +138,8 @@ pmapFromList' ::
   , FromData (PLifted b)
   , PLift a
   , PLift b
+  , PIsData a
+  , PIsData b
   ) =>
   [(PLifted a, PLifted b)] ->
   Term s (PMap a b)
