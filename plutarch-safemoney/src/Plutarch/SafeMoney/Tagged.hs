@@ -1,5 +1,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE PolyKinds    #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
 {- |
